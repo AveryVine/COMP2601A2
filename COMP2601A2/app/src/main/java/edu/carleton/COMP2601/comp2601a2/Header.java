@@ -1,8 +1,8 @@
-package edu.carleton.comp2601.lecture9;
+package edu.carleton.COMP2601.comp2601a2;
 
 import java.io.Serializable;
 
-import edu.carleton.comp2601.lecture9.Fields;
+import edu.carleton.COMP2601.comp2601a2.Fields;
 
 public class Header implements Serializable {
 	/**

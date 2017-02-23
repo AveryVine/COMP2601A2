@@ -1,4 +1,4 @@
-package edu.carleton.comp2601.lecture9;
+package edu.carleton.COMP2601.comp2601a2;
 
 public class NoEventHandler extends Exception {
 	
