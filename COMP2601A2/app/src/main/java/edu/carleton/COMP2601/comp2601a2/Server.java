@@ -1,8 +1,6 @@
 package edu.carleton.COMP2601.comp2601a2;
 
-import java.io.*;
 import java.net.*;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
@@ -17,40 +15,73 @@ public class Server {
     public void init() {
         r = new Reactor();
         clients = new ConcurrentHashMap<String, ThreadWithReactor>();
-        r.register("connection", new EventHandler() {
-            public void handleEvent(Event ev) {
-                System.out.println("Received connection request");
-                String id = (String) ev.get(Fields.ID);
-                System.out.println("Client: " + id);
+
+        r.register("CONNECT_REQUEST", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received CONNECT_REQUEST");
+                String id = (String) event.get(Fields.ID);
+                System.out.println("Client Connected: " + id);
                 ThreadWithReactor twr = (ThreadWithReactor) Thread.currentThread();
                 clients.put(id, twr);
+
+                Event ev = new Event("CONNECTED_RESPONSE");
+                EventStream es = twr.getEventSource();
                 try {
-                    Event e = new Event("loginSuccess");
-                    e.put(Fields.ID, id);
-                    EventStream es = twr.getEventSource();
-                    es.putEvent(e);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        r.register("message", new EventHandler() {
-            public void handleEvent(Event ev) {
-                System.out.println("Received message request");
-                try {
-                    String recipient = (String) ev.get(Fields.RECIPIENT);
-                    ThreadWithReactor twr = clients.get(recipient);
-                    EventStream es = twr.getEventSource();
-                    System.out.println("Recipient: " + recipient);
-                    System.out.println("Contents: " + ev.get(Fields.BODY));
                     es.putEvent(ev);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
+                sendUpdatedUserList();
             }
         });
+        r.register("PLAY_GAME_REQUEST", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received PLAY_GAME_REQUEST");
+                passEventToRecipient(event);
+            }
+        });
+        r.register("PLAY_GAME_RESPONSE", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received PLAY_GAME_RESPONSE");
+                passEventToRecipient(event);
+            }
+        });
+        r.register("DISCONNECT_REQUEST", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received DISCONNECT_REQUEST");
+                String id = (String) event.get(Fields.ID);
+                System.out.println("Client Disconnected: " + id);
+                clients.remove(id);
+                sendUpdatedUserList();
+            }
+        });
+        r.register("GAME_ON", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received GAME_ON");
+                passEventToRecipient(event);
+            }
+        });
+        r.register("MOVE_MESSAGE", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received MOVE_MESSAGE");
+                passEventToRecipient(event);
+            }
+        });
+        r.register("GAME_OVER", new EventHandler() {
+            @Override
+            public void handleEvent(Event event) {
+                System.out.println("Received GAME_OVER");
+                passEventToRecipient(event);
+            }
+        });
+
         try {
             listener = new ServerSocket(PORT);
             run();
@@ -61,11 +92,37 @@ public class Server {
         }
     }
 
+    public void passEventToRecipient(Event event) {
+        ThreadWithReactor twr = clients.get(event.get(Fields.RECIPIENT));
+        EventStream es = twr.getEventSource();
+        try {
+            es.putEvent(event);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendUpdatedUserList() {
+        Event event = new Event("USERS_UPDATED");
+        //TODO - add a body containing the list of users
+        for (ConcurrentHashMap.Entry<String, ThreadWithReactor> entry : clients.entrySet()) {
+            twr = clients.get(entry.getKey());
+            EventStream es = twr.getEventSource();
+            try {
+                es.putEvent(event);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void run() {
         try {
             while (true) {
+                System.out.println("Listening...");
                 s = listener.accept();
-                System.out.println("Accepted a connection");
                 es = new EventStreamImpl(s);
                 twr = new ThreadWithReactor(es, r);
                 twr.start();
