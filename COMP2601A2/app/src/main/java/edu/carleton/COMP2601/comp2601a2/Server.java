@@ -1,5 +1,7 @@
 package edu.carleton.COMP2601.comp2601a2;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.net.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -105,7 +107,16 @@ public class Server {
 
     public void sendUpdatedUserList() {
         Event event = new Event("USERS_UPDATED");
-        //TODO - add a body containing the list of users
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("listOfUsers", clients);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        event.put("jsonList", object.toString());
+
         for (ConcurrentHashMap.Entry<String, ThreadWithReactor> entry : clients.entrySet()) {
             twr = clients.get(entry.getKey());
             EventStream es = twr.getEventSource();
