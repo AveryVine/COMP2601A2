@@ -5,9 +5,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
+    private ProgressBar spinner;
 
     private String address;
     private int port;
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        spinner=(ProgressBar)findViewById(R.id.progressBar);
         promptName();
         
         array = new ArrayList<String>();
@@ -45,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
 
-
         new Thread(new Runnable() {
 
             @Override
@@ -54,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Message mes = new Message();
                     mes.header.type = "CONNECT_REQUEST";
-
                     messageReactor.connect(address, port, nameText);
-
+                    spinner.setVisibility(View.VISIBLE);
                     messageReactor.request(mes);
 
                 } catch (Exception e) {
@@ -64,23 +67,63 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                String name = array.get(position);
+                Message gameRequestMes = new Message();
+                //gameRequestMes.body.addField(name);                         //need to know the sender name
+                gameRequestMes.header.type = "PLAY_GAME_REQUEST";
+                messageReactor.connect(address, port, nameText);
+                messageReactor.request(gameRequestMes);
+
+            }
+        });
+
     }
 
     public static MainActivity getInstance() { return instance; }
 
+
     public void connectedResponse() {
-        Toast.makeText(MainActivity.this, "Connected!", Toast.LENGTH_SHORT).show();
         //TODO - Add above (and remove here) progress spinner
+        spinner.setVisibility(View.GONE);
+        Toast.makeText(MainActivity.this, "Connected!", Toast.LENGTH_SHORT).show();
+
     }
+
+    public void incomingGameRequest() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Set up the buttons
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // PLAY_GAME_RESPONSE is returned to the server
+                // with the play status set to true. A new GameActivity display is then created.
+            }
+        });
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //PLAY_GAME_RESPONSE is returned to the server with the play status set to false.
+            }
+        });
+        builder.show();
+    }
+
 
     public void promptName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Title");
+        builder.setTitle("Please enter your name here");
 
         // Set up the input
         final EditText input = new EditText(this);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
         // Set up the buttons
@@ -94,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void usersUpdated(Message mes) {
-
         JSONObject json;
         try {
             json = new JSONObject(mes.body.getField("listOfUsers").toString());
