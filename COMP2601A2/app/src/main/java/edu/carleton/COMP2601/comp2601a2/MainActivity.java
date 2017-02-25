@@ -22,8 +22,8 @@ public class MainActivity extends AppCompatActivity {
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
     private ProgressBar spinner;
 
-    private String address;
-    private int port;
+    private String address = "192.168.0.21";
+    private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
     public static MainActivity instance;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> array;
 
     MessageReactor messageReactor;
-    private String nameText;
+    private String nameText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         spinner=(ProgressBar)findViewById(R.id.progressBar);
         promptName();
+
+        messageReactor = new MessageReactor();
         
         array = new ArrayList<String>();
         instance = this;
@@ -58,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Message mes = new Message();
                     mes.header.type = "CONNECT_REQUEST";
+                    while (nameText == "") {
+
+                    }
                     messageReactor.connect(address, port, nameText);
                     spinner.setVisibility(View.VISIBLE);
                     messageReactor.request(mes);
@@ -90,12 +95,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void connectedResponse() {
         //TODO - Add above (and remove here) progress spinner
-        spinner.setVisibility(View.GONE);
-        Toast.makeText(MainActivity.this, "Connected!", Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            public void run() {
+                spinner.setVisibility(View.GONE);
+                Toast.makeText(MainActivity.this, "Connected!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
-    public void incomingGameRequest() {
+    public void playGameRequest() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Set up the buttons

@@ -1,7 +1,6 @@
 package edu.carleton.COMP2601.comp2601a2;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -139,6 +138,7 @@ public class Server {
             while (true) {
                 System.out.println("Listening...");
                 s = listener.accept();
+                System.out.println("Accepted a connection...");
                 es = new EventStreamImpl(s);
                 twr = new ThreadWithReactor(es, r);
                 twr.start();
