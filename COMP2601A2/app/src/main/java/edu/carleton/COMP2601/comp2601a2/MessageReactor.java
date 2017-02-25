@@ -29,10 +29,7 @@ public class MessageReactor {
                 @Override
                 public void handleEvent(Event event) {
                     System.out.println("Received CONNECTED_RESPONSE");
-                    Message message = new Message();
-                    message.header.type = event.type;
-                    message.header.id = event.get(Fields.ID).toString();
-                    //MainActivity.getInstance().
+                    MainActivity.getInstance().connectedResponse();
                 }
             });
             twr.register("USERS_UPDATED", new EventHandler() {
@@ -49,7 +46,7 @@ public class MessageReactor {
                     message.header.id = event.get(Fields.ID).toString();
                     System.out.println(event.get(Fields.ID).toString());
                     message.header.recipient = event.get(Fields.RECIPIENT).toString();
-                    MainActivity.getInstance().updateListView(message);
+                    MainActivity.getInstance().usersUpdated(message);
                 }
             });
             twr.register("PLAY_GAME_REQUEST", new EventHandler() {

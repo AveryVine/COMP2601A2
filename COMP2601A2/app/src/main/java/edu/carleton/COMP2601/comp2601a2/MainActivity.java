@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -15,14 +16,14 @@ public class MainActivity extends AppCompatActivity {
 
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
 
+    private String address;
+    private int port;
 
     private android.widget.ArrayAdapter adapter;
     public static MainActivity instance;
 
 
     ArrayList<String> array;
-    static ObjectInputStream ois;
-    static ObjectOutputStream oos;
 
     MessageReactor messageReactor;
 
@@ -48,14 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     Message mes = new Message();
-                    mes.header.type = "CONNECT_REQUEST";;
-                    System.out.println("Lookup: " + mes);
-                    s.request(mes);
+                    mes.header.type = "CONNECT_REQUEST";
 
-                    messageReactor.connect();
+                    messageReactor.connect(address, port, nameText);
 
-                    //MainActivity.getInstance().s.request(listFiles);
-
+                    messageReactor.request(mes);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -66,8 +64,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static MainActivity getInstance() { return instance; }
 
+    public void connectedResponse() {
+        Toast.makeText(MainActivity.this, "Connected!", Toast.LENGTH_SHORT).show();
+        //TODO - Add above (and remove here) progress spinner
+    }
 
-    public void updateListView(Message mes) {
+    public void usersUpdated(Message mes) {
 
         JSONObject json;
         try {
