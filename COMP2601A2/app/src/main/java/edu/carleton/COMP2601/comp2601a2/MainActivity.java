@@ -11,13 +11,13 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,12 +35,14 @@ public class MainActivity extends AppCompatActivity {
 
     MessageReactor messageReactor;
     private String nameText = "";
+    private TextView textField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         spinner = (ProgressBar) findViewById(R.id.progressBar);
+        textField = (TextView) findViewById(R.id.textView);
         spinner.setVisibility(View.GONE);
         promptName();
 
@@ -86,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
                                     int position, long id) {
 
                 String name = array.get(position);
-                Message gameRequestMes = new Message();
-                gameRequestMes.header.type = "PLAY_GAME_REQUEST";
-                gameRequestMes.body.addField(Fields.RECIPIENT, name);
-                messageReactor.request(gameRequestMes);
+                Message message = new Message();
+                message.header.type = "PLAY_GAME_REQUEST";
+                message.body.addField(Fields.RECIPIENT, name);
+                messageReactor.request(message);
             }
         });
 
@@ -109,30 +111,52 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void playGameRequest(Message mes) {
+    public void playGameRequest(final Message mes) {
         runOnUiThread(new Runnable() {
             public void run() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.getInstance());
+                builder.setTitle(mes.header.id + " has challenged you to a game.");
 
                 // Set up the buttons
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // PLAY_GAME_RESPONSE is returned to the server
-                        // with the play status set to true. A new GameActivity display is then created.
-
-
+                        // PLAY_GAME_RESPONSE is returned to the server with the play status set to true. A new GameActivity display is then created.
+                        Message message = new Message();
+                        message.header.type = "PLAY_GAME_RESPONSE";
+                        message.body.addField(Fields.RECIPIENT, mes.header.id);
+                        message.body.addField(Fields.PLAY_STATUS, "true");
+                        messageReactor.request(message);
                     }
                 });
                 builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //PLAY_GAME_RESPONSE is returned to the server with the play status set to false.
+                        Message message = new Message();
+                        message.header.type = "PLAY_GAME_RESPONSE";
+                        message.body.addField(Fields.RECIPIENT, mes.header.id);
+                        message.body.addField(Fields.PLAY_STATUS, "false");
+                        messageReactor.request(message);
                     }
                 });
                 builder.show();
             }
         });
+    }
+
+    public void playGameResponse(final Message mes) {
+        System.out.println(mes.body.getField(Fields.PLAY_STATUS).toString());
+        if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
+            System.out.println("NOT IMPLEMENTED YET");
+        }
+        else {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    textField.setText(mes.header.id + " does not want to play.");
+                }
+            });
+        }
     }
 
 
