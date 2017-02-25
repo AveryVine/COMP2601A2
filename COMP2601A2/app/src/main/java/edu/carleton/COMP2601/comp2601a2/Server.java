@@ -119,9 +119,10 @@ public class Server {
         catch(Exception e) {
             e.printStackTrace();
         }
-        event.put(Fields.BODY, object.toString());
+        event.put(Fields.BODY, object);
 
         for (ConcurrentHashMap.Entry<String, ThreadWithReactor> entry : clients.entrySet()) {
+            event.put(Fields.ID, entry.getKey());
             twr = clients.get(entry.getKey());
             EventStream es = twr.getEventSource();
             try {

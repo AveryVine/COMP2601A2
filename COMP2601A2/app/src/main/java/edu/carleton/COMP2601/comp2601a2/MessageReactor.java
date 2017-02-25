@@ -38,14 +38,9 @@ public class MessageReactor {
                     System.out.println("Received USERS_UPDATED");
                     Message message = new Message();
                     message.header.type = event.type;
-                    System.out.println("Fields.BODY: " + event.get(Fields.BODY));
                     if (event.get(Fields.BODY) != null)
                         message.body.addField("listOfUsers", event.get(Fields.BODY));
-//                    if (event.get(Fields.BODY) != null)
-//                        message.body.getMap().putAll((Map<? extends String, ? extends Serializable>)event.get(Fields.BODY));
                     message.header.id = event.get(Fields.ID).toString();
-                    System.out.println(event.get(Fields.ID).toString());
-                    message.header.recipient = event.get(Fields.RECIPIENT).toString();
                     MainActivity.getInstance().usersUpdated(message);
                 }
             });

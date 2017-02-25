@@ -14,8 +14,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        spinner=(ProgressBar)findViewById(R.id.progressBar);
+        spinner = (ProgressBar) findViewById(R.id.progressBar);
+        spinner.setVisibility(View.GONE);
         promptName();
 
         messageReactor = new MessageReactor();
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         instance = this;
 
         adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_main, array);
+                R.layout.activity_main_component, array);
 
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
@@ -64,7 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     messageReactor.connect(address, port, nameText);
-                    spinner.setVisibility(View.VISIBLE);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            spinner.setVisibility(View.VISIBLE);
+                        }
+                    });
                     messageReactor.request(mes);
 
                 } catch (Exception e) {
@@ -146,11 +153,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void usersUpdated(Message mes) {
-        JSONObject json;
         try {
-            json = new JSONObject(mes.body.getField("listOfUsers").toString());
-            array = (ArrayList) json.get("listOfUsers");
-            adapter.notifyDataSetChanged();
+            JSONObject jsonObj = new JSONObject(mes.body.getField("listOfUsers").toString());
+            for (int i = 0; i < jsonObj.length(); i++) {
+                array.add(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
+            }
+            System.out.println(array);
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
