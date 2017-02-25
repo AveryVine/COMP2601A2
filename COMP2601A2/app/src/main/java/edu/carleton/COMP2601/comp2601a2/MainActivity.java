@@ -87,11 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
                 String name = array.get(position);
                 Message gameRequestMes = new Message();
-                //gameRequestMes.body.addField(name);                         //need to know the sender name
                 gameRequestMes.header.type = "PLAY_GAME_REQUEST";
-                messageReactor.connect(address, port, nameText);
+                gameRequestMes.body.addField(Fields.RECIPIENT, name);
                 messageReactor.request(gameRequestMes);
-
             }
         });
 
@@ -160,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < jsonObj.length(); i++) {
                 array.add(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
             }
-            System.out.println(array);
             runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.notifyDataSetChanged();
