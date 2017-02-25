@@ -2,8 +2,8 @@ package edu.carleton.COMP2601.comp2601a2;
 
 import android.content.Intent;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class MessageReactor {
                     Message message = new Message();
                     message.header.type = event.type;
                     message.header.id = event.get(Fields.ID).toString();
-                    broadcast(message);
+                    //MainActivity.getInstance().
                 }
             });
             twr.register("USERS_UPDATED", new EventHandler() {
@@ -43,11 +43,13 @@ public class MessageReactor {
                     message.header.type = event.type;
                     System.out.println("Fields.BODY: " + event.get(Fields.BODY));
                     if (event.get(Fields.BODY) != null)
-                        message.body.getMap().putAll((Map<? extends String, ? extends Serializable>)event.get(Fields.BODY));
+                        message.body.addField("listOfUsers", event.get(Fields.BODY));
+//                    if (event.get(Fields.BODY) != null)
+//                        message.body.getMap().putAll((Map<? extends String, ? extends Serializable>)event.get(Fields.BODY));
                     message.header.id = event.get(Fields.ID).toString();
                     System.out.println(event.get(Fields.ID).toString());
                     message.header.recipient = event.get(Fields.RECIPIENT).toString();
-                    broadcast(message);
+                    MainActivity.getInstance().updateListView(message);
                 }
             });
             twr.register("PLAY_GAME_REQUEST", new EventHandler() {
@@ -107,13 +109,13 @@ public class MessageReactor {
         return msg;
     }
 
-    public void broadcast(Serializable obj) {
-        // This will cause all BroadcastReceivers to receive
-        // the intent message. We‘d put obj here as payload.
-        Intent i = new Intent();
-        i.putExtra("myKey", obj);
-        i.setAction(CUSTOM_INTENT);
-        System.out.println("Object: " + obj);
-        sendBroadcast(i);
-    }
+//    public void broadcast(Serializable obj) {
+//        // This will cause all BroadcastReceivers to receive
+//        // the intent message. We‘d put obj here as payload.
+//        Intent i = new Intent();
+//        i.putExtra("myKey", obj);
+//        i.setAction(CUSTOM_INTENT);
+//        System.out.println("Object: " + obj);
+//        sendBroadcast(i);
+//    }
 }

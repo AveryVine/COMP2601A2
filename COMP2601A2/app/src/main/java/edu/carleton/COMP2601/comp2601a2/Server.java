@@ -115,7 +115,7 @@ public class Server {
         catch(Exception e) {
             e.printStackTrace();
         }
-        event.put("jsonList", object.toString());
+        event.put(Fields.BODY, object.toString());
 
         for (ConcurrentHashMap.Entry<String, ThreadWithReactor> entry : clients.entrySet()) {
             twr = clients.get(entry.getKey());
