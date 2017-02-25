@@ -106,7 +106,7 @@ public class MessageReactor {
         if (event.get(Fields.BODY) != null)
             message.body.addField(Fields.BODY, event.get(Fields.BODY));
         if (event.get(Fields.RECIPIENT) != null)
-            message.body.addField(Fields.RECIPIENT, event.get(Fields.RECIPIENT));
+            message.header.recipient = event.get(Fields.RECIPIENT).toString();
         message.header.id = event.get(Fields.ID).toString();
         return message;
     }
