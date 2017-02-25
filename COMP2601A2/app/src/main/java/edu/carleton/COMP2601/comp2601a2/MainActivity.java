@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         promptName();
 
         messageReactor = new MessageReactor();
-        
         array = new ArrayList<String>();
         instance = this;
+
 
         adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_main_component, array);
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void playGameRequest() {
+    public void playGameRequest(Message mes) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Set up the buttons
@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 // PLAY_GAME_RESPONSE is returned to the server
                 // with the play status set to true. A new GameActivity display is then created.
+                
+
             }
         });
         builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
