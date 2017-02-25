@@ -110,25 +110,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playGameRequest(Message mes) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.getInstance());
 
-        // Set up the buttons
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // PLAY_GAME_RESPONSE is returned to the server
-                // with the play status set to true. A new GameActivity display is then created.
-                
+                // Set up the buttons
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // PLAY_GAME_RESPONSE is returned to the server
+                        // with the play status set to true. A new GameActivity display is then created.
 
+
+                    }
+                });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //PLAY_GAME_RESPONSE is returned to the server with the play status set to false.
+                    }
+                });
+                builder.show();
             }
         });
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //PLAY_GAME_RESPONSE is returned to the server with the play status set to false.
-            }
-        });
-        builder.show();
     }
 
 
@@ -154,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void usersUpdated(Message mes) {
         try {
-            JSONObject jsonObj = new JSONObject(mes.body.getField("listOfUsers").toString());
+            JSONObject jsonObj = new JSONObject(mes.body.getField(Fields.BODY).toString());
             for (int i = 0; i < jsonObj.length(); i++) {
                 array.add(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
             }
