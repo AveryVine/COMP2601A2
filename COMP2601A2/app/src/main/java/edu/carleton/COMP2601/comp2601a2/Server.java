@@ -3,6 +3,7 @@ package edu.carleton.COMP2601.comp2601a2;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
@@ -107,10 +108,14 @@ public class Server {
 
     public void sendUpdatedUserList() {
         Event event = new Event("USERS_UPDATED");
+        ArrayList<String> listOfClients = new ArrayList<>();
+        for (ConcurrentHashMap.Entry<String, ThreadWithReactor> entry : clients.entrySet()) {
+            listOfClients.add(entry.getKey());
+        }
 
         JSONObject object = new JSONObject();
         try {
-            object.put("listOfUsers", clients);
+            object.put("listOfUsers", listOfClients);
         }
         catch(Exception e) {
             e.printStackTrace();
