@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONObject;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -62,9 +64,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateListView(Message mes) {
 
-        for (int i=1; i<3; i++) {
-            array.add(mes.body.getField(Integer.toString(i)).toString());
+        JSONObject json;
+        try {
+            json = new JSONObject(mes.body.getField("listOfUsers").toString());
+            array = (ArrayList) json.get("listOfUsers");
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        adapter.notifyDataSetChanged();
     }
 }
