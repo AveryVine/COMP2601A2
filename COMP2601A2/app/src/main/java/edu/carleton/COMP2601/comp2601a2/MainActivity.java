@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     static ObjectInputStream ois;
     static ObjectOutputStream oos;
 
+    MessageReactor messageReactor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +47,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 try {
-                    Message listFiles = new Message();
-                    listFiles.header.type = "list files";
-                    System.out.println("Lookup: " + listFiles);
+                    Message mes = new Message();
+                    mes.header.type = "CONNECT_REQUEST";;
+                    System.out.println("Lookup: " + mes);
+                    s.request(mes);
+
+                    messageReactor.connect();
 
                     //MainActivity.getInstance().s.request(listFiles);
 
