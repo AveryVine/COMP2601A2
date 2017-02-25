@@ -1,16 +1,6 @@
 package edu.carleton.COMP2601.comp2601a2;
 
-import android.content.Intent;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.io.Serializable;
 import java.net.Socket;
-import java.util.Map;
-
-/**
- * Created by AveryVine on 2017-02-23.
- */
 
 public class MessageReactor {
 
@@ -52,6 +42,8 @@ public class MessageReactor {
                 @Override
                 public void handleEvent(Event event) {
                     System.out.println("Received PLAY_GAME_RESPONSE");
+                    Message message = convertEventToMessage(event);
+                    MainActivity.getInstance().playGameResponse(message);
                 }
             });
             twr.register("DISCONNECT_RESPONSE", new EventHandler() {
@@ -89,10 +81,10 @@ public class MessageReactor {
             System.out.println("Requesting...");
             Event event = new Event(msg.header.type, es);
             event.put(Fields.ID, userid);
-            event.put(Fields.RECIPIENT, msg.body.getField(Fields.RECIPIENT));
-            if (!msg.body.getMap().isEmpty()) {
+            event.put(Fields.PLAY_STATUS, msg.body.getField(Fields.PLAY_STATUS));
+            if (!msg.body.getMap().isEmpty())
                 event.put(Fields.BODY, msg.body.getMap());
-            }
+            event.put(Fields.RECIPIENT, msg.body.getField(Fields.RECIPIENT));
             es.putEvent(event);
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,6 +99,8 @@ public class MessageReactor {
             message.body.addField(Fields.BODY, event.get(Fields.BODY));
         if (event.get(Fields.RECIPIENT) != null)
             message.header.recipient = event.get(Fields.RECIPIENT).toString();
+        if (event.get(Fields.PLAY_STATUS) != null)
+            message.body.addField(Fields.PLAY_STATUS, event.get(Fields.PLAY_STATUS));
         message.header.id = event.get(Fields.ID).toString();
         return message;
     }
