@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
     private ProgressBar spinner;
 
-    private String address = "192.168.0.26";
+    private String address = "192.168.0.21";
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> array;
 
     MessageReactor messageReactor;
+    private ListView listView;
     private String nameText = "";
     private TextView textField;
 
@@ -51,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         instance = this;
 
 
-        adapter = new ArrayAdapter<String>(this,
+        adapter = new ArrayAdapter<String>(MainActivity.getInstance(),
                 R.layout.activity_main_component, array);
 
-        ListView listView = (ListView) findViewById(R.id.list);
+        listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
 
         new Thread(new Runnable() {
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void connectedResponse() {
-        //TODO - Add above (and remove here) progress spinner
         runOnUiThread(new Runnable() {
             public void run() {
                 spinner.setVisibility(View.GONE);
@@ -183,9 +183,13 @@ public class MainActivity extends AppCompatActivity {
     public void usersUpdated(Message mes) {
         try {
             JSONObject jsonObj = new JSONObject(mes.body.getField(Fields.BODY).toString());
-            for (int i = 0; i < jsonObj.length(); i++) {
+            array = new ArrayList<>();
+            for (int i = 0; i < ((JSONArray) jsonObj.get("listOfUsers")).length(); i++) {
+                System.out.println("Added : " + ((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
+                System.out.println(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString().getClass().getName());
                 array.add(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
             }
+            System.out.println(array);
             runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.notifyDataSetChanged();
