@@ -36,11 +36,7 @@ public class MessageReactor {
                 @Override
                 public void handleEvent(Event event) {
                     System.out.println("Received USERS_UPDATED");
-                    Message message = new Message();
-                    message.header.type = event.type;
-                    if (event.get(Fields.BODY) != null)
-                        message.body.addField("listOfUsers", event.get(Fields.BODY));
-                    message.header.id = event.get(Fields.ID).toString();
+                    Message message = convertEventToMessage(event);
                     MainActivity.getInstance().usersUpdated(message);
                 }
             });
@@ -48,6 +44,8 @@ public class MessageReactor {
                 @Override
                 public void handleEvent(Event event) {
                     System.out.println("Received PLAY_GAME_REQUEST");
+                    Message message = convertEventToMessage(event);
+                    MainActivity.getInstance().playGameRequest(message);
                 }
             });
             twr.register("PLAY_GAME_RESPONSE", new EventHandler() {
@@ -91,7 +89,7 @@ public class MessageReactor {
             System.out.println("Requesting...");
             Event event = new Event(msg.header.type, es);
             event.put(Fields.ID, userid);
-            event.put(Fields.RECIPIENT, msg.header.recipient);
+            event.put(Fields.RECIPIENT, msg.body.getField(Fields.RECIPIENT));
             if (!msg.body.getMap().isEmpty()) {
                 event.put(Fields.BODY, msg.body.getMap());
             }
@@ -102,13 +100,14 @@ public class MessageReactor {
         return msg;
     }
 
-//    public void broadcast(Serializable obj) {
-//        // This will cause all BroadcastReceivers to receive
-//        // the intent message. We‘d put obj here as payload.
-//        Intent i = new Intent();
-//        i.putExtra("myKey", obj);
-//        i.setAction(CUSTOM_INTENT);
-//        System.out.println("Object: " + obj);
-//        sendBroadcast(i);
-//    }
+    public Message convertEventToMessage(Event event) {
+        Message message = new Message();
+        message.header.type = event.type;
+        if (event.get(Fields.BODY) != null)
+            message.body.addField(Fields.BODY, event.get(Fields.BODY));
+        if (event.get(Fields.RECIPIENT) != null)
+            message.body.addField(Fields.RECIPIENT, event.get(Fields.RECIPIENT));
+        message.header.id = event.get(Fields.ID).toString();
+        return message;
+    }
 }
