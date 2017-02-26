@@ -30,6 +30,7 @@ public class Server {
                 Event ev = new Event("CONNECTED_RESPONSE");
                 EventStream es = twr.getEventSource();
                 try {
+                    Thread.sleep(1000);
                     es.putEvent(ev);
                 }
                 catch (Exception e) {

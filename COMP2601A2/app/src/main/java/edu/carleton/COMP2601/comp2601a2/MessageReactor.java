@@ -97,7 +97,6 @@ public class MessageReactor {
             if (msg.body.getField(Fields.WINNER) != null)
                 event.put(Fields.WINNER, msg.body.getField(Fields.WINNER));
             event.put(Fields.RECIPIENT, msg.header.recipient);
-            System.out.println("Recipient: " + event.get(Fields.RECIPIENT));
             es.putEvent(event);
         } catch (Exception e) {
             e.printStackTrace();

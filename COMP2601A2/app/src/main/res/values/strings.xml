@@ -1,12 +1,14 @@
 <resources>
     <string name = "app_name">COMP2601A2</string>
+    <string name = "main_activity_name">Tic Tac Toe: Users</string>
+    <string name = "game_activity_name">Tic Tac Toe</string>
     <string name = "startButton_gameActive">Stop</string>
     <string name = "startButton_gameInactive">Start</string>
+    <string name = "startButton_gameWaiting">Waiting</string>
     <string name = "displayTextView_gameInactive">Press Start</string>
-    <string name = "gameOver_part1">Game is over.</string>
-    <string name = "gameOver_part2">has won!</string>
-    <string name = "tie_winner">Game is over. No one won!</string>
-    <string name = "no_winner">I ended the game.</string>
+    <string name = "gameOver"> won the game.</string>
+    <string name = "tie_winner">The game was a draw.</string>
+    <string name = "no_winner"> ended the game.</string>
     <string name = "blank"></string>
     <string name = "square0">Button 0 pressed.</string>
     <string name = "square1">Button 1 pressed.</string>

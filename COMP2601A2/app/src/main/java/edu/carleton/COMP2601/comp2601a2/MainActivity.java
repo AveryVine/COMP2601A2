@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(R.string.main_activity_name);
+
         address = "192.168.0.21";
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         textField = (TextView) findViewById(R.id.textView);
