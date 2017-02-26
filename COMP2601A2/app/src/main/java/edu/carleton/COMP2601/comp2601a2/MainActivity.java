@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,14 +20,19 @@ import android.widget.Toast;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 public class MainActivity extends AppCompatActivity {
 
-    static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
     private ProgressBar spinner;
 
-    private String address = "192.168.0.26";
+    private String address;
+
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -44,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        address = getIpAddress();
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         textField = (TextView) findViewById(R.id.textView);
         spinner.setVisibility(View.GONE);
@@ -77,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     messageReactor.request(mes);
-                    //adapter.notifyDataSetChanged();                 //trying this change
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -106,6 +112,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static String getIpAddress() {
+        try {
+            for (Enumeration en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = (NetworkInterface) en.nextElement();
+                for (Enumeration enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()&&inetAddress instanceof Inet4Address) {
+                        String ipAddress=inetAddress.getHostAddress().toString();
+                        Log.e("IP address",""+ipAddress);
+                        return ipAddress;
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -158,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
                         message.body.addField(Fields.RECIPIENT, mes.header.id);
                         message.body.addField(Fields.PLAY_STATUS, "true");
                         messageReactor.request(message);
+                        Intent communicationView = new Intent(MainActivity.getInstance(), GameActivity.class);
+                        MainActivity.getInstance().startActivity(communicationView);
                     }
                 });
                 builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -178,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void playGameResponse(final Message mes) {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
-            System.out.println("NOT IMPLEMENTED YET");
+            Intent communicationView = new Intent(this, GameActivity.class);
+            MainActivity.getInstance().startActivity(communicationView);
         }
         else {
             runOnUiThread(new Runnable() {
