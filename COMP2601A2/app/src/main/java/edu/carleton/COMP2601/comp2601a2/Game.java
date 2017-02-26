@@ -1,10 +1,10 @@
 package edu.carleton.COMP2601.comp2601a2;
 import java.util.Random;
 
-import static edu.carleton.COMP2601.comp2601a2.MainActivity.X_VAL;
-import static edu.carleton.COMP2601.comp2601a2.MainActivity.O_VAL;
-import static edu.carleton.COMP2601.comp2601a2.MainActivity.TIE_WINNER;
-import static edu.carleton.COMP2601.comp2601a2.MainActivity.EMPTY_VAL;
+import static edu.carleton.COMP2601.comp2601a2.GameActivity.X_VAL;
+import static edu.carleton.COMP2601.comp2601a2.GameActivity.O_VAL;
+import static edu.carleton.COMP2601.comp2601a2.GameActivity.TIE_WINNER;
+import static edu.carleton.COMP2601.comp2601a2.GameActivity.EMPTY_VAL;
 
 public class Game {
 

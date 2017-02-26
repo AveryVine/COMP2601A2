@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
                     if (!inetAddress.isLoopbackAddress()&&inetAddress instanceof Inet4Address) {
                         String ipAddress=inetAddress.getHostAddress().toString();
                         Log.e("IP address",""+ipAddress);
-                        return ipAddress;
+                        return "192.168.0.21";
+                        //return ipAddress;
                     }
                 }
             }
