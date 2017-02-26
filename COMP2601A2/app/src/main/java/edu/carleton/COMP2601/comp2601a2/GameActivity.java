@@ -26,7 +26,7 @@ public class GameActivity extends AppCompatActivity {
 
         imgButtonArr = new ImageButton[9];
 
-        initUI();
+        //initUI();
         game = new Game();
         game.toggleActive();
 
@@ -55,7 +55,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void gameLoop() {
-
+        while (game.getActive()) {
+            
+        }
     }
 
     /*----------
