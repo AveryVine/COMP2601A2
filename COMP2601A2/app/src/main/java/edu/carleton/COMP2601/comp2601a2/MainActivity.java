@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
     private ProgressBar spinner;
 
-    private String address = "192.168.0.19";
+    private String address = "192.168.0.21";
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     messageReactor.request(mes);
-                    //adapter.notifyDataSetChanged();                 //trying this change
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -145,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
                         message.body.addField(Fields.RECIPIENT, mes.header.id);
                         message.body.addField(Fields.PLAY_STATUS, "true");
                         messageReactor.request(message);
+                        Intent communicationView = new Intent(MainActivity.getInstance(), GameActivity.class);
+                        MainActivity.getInstance().startActivity(communicationView);
                     }
                 });
                 builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
