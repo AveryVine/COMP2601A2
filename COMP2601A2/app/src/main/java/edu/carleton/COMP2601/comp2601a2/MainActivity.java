@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!name.equals(nameText)) {
                     Message message = new Message();
                     message.header.type = "PLAY_GAME_REQUEST";
-                    message.body.addField(Fields.RECIPIENT, name);
+                    message.header.recipient = name;
                     messageReactor.request(message);
                 }
                 else {
@@ -143,11 +143,12 @@ public class MainActivity extends AppCompatActivity {
                         // PLAY_GAME_RESPONSE is returned to the server with the play status set to true. A new GameActivity display is then created.
                         Message message = new Message();
                         message.header.type = "PLAY_GAME_RESPONSE";
-                        message.body.addField(Fields.RECIPIENT, mes.header.id);
+                        message.header.recipient = mes.header.id;
                         message.body.addField(Fields.PLAY_STATUS, "true");
                         messageReactor.request(message);
                         Intent communicationView = new Intent(MainActivity.getInstance(), GameActivity.class);
                         communicationView.putExtra("playerTurn", O_VAL);
+                        gameView.putExtra("opponent", mes.header.id);
                         MainActivity.getInstance().startActivity(communicationView);
                     }
                 });
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         //PLAY_GAME_RESPONSE is returned to the server with the play status set to false.
                         Message message = new Message();
                         message.header.type = "PLAY_GAME_RESPONSE";
-                        message.body.addField(Fields.RECIPIENT, mes.header.id);
+                        message.header.recipient = mes.header.id;
                         message.body.addField(Fields.PLAY_STATUS, "false");
                         messageReactor.request(message);
                     }
