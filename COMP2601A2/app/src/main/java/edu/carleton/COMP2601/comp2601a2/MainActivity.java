@@ -146,9 +146,9 @@ public class MainActivity extends AppCompatActivity {
                         message.body.addField(Fields.RECIPIENT, mes.header.id);
                         message.body.addField(Fields.PLAY_STATUS, "true");
                         messageReactor.request(message);
-                        Intent communicationView = new Intent(MainActivity.getInstance(), GameActivity.class);
-                        communicationView.putExtra("playerTurn", O_VAL);
-                        MainActivity.getInstance().startActivity(communicationView);
+                        Intent gameActivity = new Intent(MainActivity.getInstance(), GameActivity.class);
+                        gameActivity.putExtra("playerTurn", O_VAL);
+                        MainActivity.getInstance().startActivity(gameActivity);
                     }
                 });
                 builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -169,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void playGameResponse(final Message mes) {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
-            Intent communicationView = new Intent(this, GameActivity.class);
-            communicationView.putExtra("playerTurn", X_VAL);
-            MainActivity.getInstance().startActivity(communicationView);
+            Intent gameActivity = new Intent(this, GameActivity.class);
+            gameActivity.putExtra("playerTurn", X_VAL);
+            MainActivity.getInstance().startActivity(gameActivity);
         }
         else {
             runOnUiThread(new Runnable() {

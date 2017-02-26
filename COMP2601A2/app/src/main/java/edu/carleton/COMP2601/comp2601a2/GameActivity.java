@@ -55,6 +55,10 @@ public class GameActivity extends AppCompatActivity {
                 else {
                     game = new Game();
                     prepareUI();
+                    Message message = new Message();
+                    message.header.type = "GAME_ON";
+                    message.header.recipient = opponent;
+                    messageReactor.request(message);
                     toggleClickListeners();
                 }
             }

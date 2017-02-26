@@ -1,6 +1,6 @@
 <resources>
     <string name = "app_name">COMP2601A2</string>
-    <string name = "startButton_gameActive">Running</string>
+    <string name = "startButton_gameActive">Stop</string>
     <string name = "startButton_gameInactive">Start</string>
     <string name = "displayTextView_gameInactive">Press Start</string>
     <string name = "x_winner">Game is over. You won!</string>
