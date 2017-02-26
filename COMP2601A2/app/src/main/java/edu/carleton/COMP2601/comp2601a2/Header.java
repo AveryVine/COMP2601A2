@@ -11,7 +11,6 @@ public class Header implements Serializable {
 	private static final long serialVersionUID = -7729816603167728273L;
 	public String id;	// Identity of sender; e.g., Bob
 	public String recipient; // Identity of recipient; e.g. Joe
-	public String reason; //Reason for the game ending
 	public long seqNo;	// Sequence number for message
 	public String retId;	// Return identity for routing
 	public String type;		// Type of message (for reactor usage)
@@ -19,7 +18,6 @@ public class Header implements Serializable {
 	public Header() {
 		id = Fields.DEFAULT;
 		recipient = Fields.DEFAULT;
-		reason = Fields.REASON;
 		retId = Fields.DEFAULT;
 		type = Fields.NO_ID;
 		seqNo = Fields.DEFAULT_SEQ_ID;

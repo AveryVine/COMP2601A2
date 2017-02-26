@@ -76,7 +76,7 @@ public class MessageReactor {
                 public void handleEvent(Event event) {
                     System.out.println("Received GAME_OVER");
                     Message message = convertEventToMessage(event);
-                    //GameActivity.getInstance().moveMessage(message);
+                    GameActivity.getInstance().gameOver(message);
                 }
             });
             twr.start();
@@ -94,6 +94,8 @@ public class MessageReactor {
                 event.put(Fields.BODY, msg.body.getMap());
             if (msg.body.getField(Fields.CHOICE) != null)
                 event.put(Fields.CHOICE, msg.body.getField(Fields.CHOICE));
+            if (msg.body.getField(Fields.WINNER) != null)
+                event.put(Fields.WINNER, msg.body.getField(Fields.WINNER));
             event.put(Fields.RECIPIENT, msg.header.recipient);
             System.out.println("Recipient: " + event.get(Fields.RECIPIENT));
             es.putEvent(event);
@@ -114,6 +116,8 @@ public class MessageReactor {
             message.body.addField(Fields.PLAY_STATUS, event.get(Fields.PLAY_STATUS));
         if (event.get(Fields.CHOICE) != null)
             message.body.addField(Fields.CHOICE, event.get(Fields.CHOICE));
+        if (event.get(Fields.WINNER) != null)
+            message.body.addField(Fields.WINNER, event.get(Fields.WINNER));
         message.header.id = event.get(Fields.ID).toString();
         return message;
     }

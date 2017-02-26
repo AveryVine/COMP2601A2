@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 import static edu.carleton.COMP2601.comp2601a2.Game.X_VAL;
 import static edu.carleton.COMP2601.comp2601a2.Game.O_VAL;
-import static edu.carleton.COMP2601.comp2601a2.Game.TIE_WINNER;
-import static edu.carleton.COMP2601.comp2601a2.Game.EMPTY_VAL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -148,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                         messageReactor.request(message);
                         Intent gameActivity = new Intent(MainActivity.getInstance(), GameActivity.class);
                         gameActivity.putExtra("playerTurn", O_VAL);
+                        gameActivity.putExtra("player", nameText);
                         gameActivity.putExtra("opponent", mes.header.id);
                         MainActivity.getInstance().startActivity(gameActivity);
                     }
@@ -172,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
             Intent gameActivity = new Intent(this, GameActivity.class);
             gameActivity.putExtra("playerTurn", X_VAL);
+            gameActivity.putExtra("player", nameText);
             gameActivity.putExtra("opponent", mes.header.id);
             MainActivity.getInstance().startActivity(gameActivity);
         }

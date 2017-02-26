@@ -21,7 +21,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView displayTextView;
     private ImageButton[] imgButtonArr;
     private int playerTurn;
-    private String opponent;
+    private String player, opponent;
     private MessageReactor messageReactor;
 
     /*----------
@@ -38,6 +38,7 @@ public class GameActivity extends AppCompatActivity {
         imgButtonArr = new ImageButton[9];
 
         playerTurn = (int) getIntent().getSerializableExtra("playerTurn");
+        player = (String) getIntent().getSerializableExtra("player");
         opponent = (String) getIntent().getSerializableExtra("opponent");
 
         initUI();
@@ -168,15 +169,8 @@ public class GameActivity extends AppCompatActivity {
         message.header.recipient = opponent;
         message.body.addField(Fields.CHOICE, choice);
         messageReactor.request(message);
-        int gameWinner = game.gameWinner();
         toggleClickListeners(false);
-        if (gameWinner == EMPTY_VAL) {
-            game.switchPlayer();
-        }
-        else {
-            game.toggleActive();
-            gameOverUI(gameWinner);
-        }
+        game.switchPlayer();
     }
 
     /*----------
@@ -202,36 +196,30 @@ public class GameActivity extends AppCompatActivity {
     - Input: the winner
     - Return: none
     ----------*/
-    public void gameOverUI(int winner) {
-
-        Message message = new Message();
-        message.header.type = "GAME_OVER";
-        message.header.recipient = opponent;
-
-        if (winner == X_VAL) {
-            displayTextView.setText(R.string.x_winner);
-            message.body.addField(Fields.REASON, R.string.x_winner);
-        }
-        else if (winner == O_VAL) {
-            displayTextView.setText(R.string.o_winner);
-            message.body.addField(Fields.REASON, R.string.o_winner);
-        }
-        else if (winner == TIE_WINNER) {
-            displayTextView.setText(R.string.tie_winner);
-            message.body.addField(Fields.REASON, R.string.tie_winner);
-        }
-        else {
-            displayTextView.setText(getString(R.string.game_ended));
-            message.body.addField(Fields.REASON, R.string.game_ended);
-        }
-        startButton.setText(getString(R.string.startButton_gameInactive));
-        messageReactor.request(message);
+    public void gameOverUI(final int winner) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (winner == playerTurn) {
+                    displayTextView.setText(getString(R.string.gameOver_part1) + " " + player + " " + getString(R.string.gameOver_part2));
+                }
+                else if (winner != playerTurn) {
+                    displayTextView.setText(getString(R.string.gameOver_part1) + " " + opponent + " " + getString(R.string.gameOver_part2));
+                }
+                else if (winner == TIE_WINNER) {
+                    displayTextView.setText(R.string.tie_winner);
+                }
+                else {
+                    displayTextView.setText(R.string.no_winner);
+                }
+                startButton.setText(getString(R.string.startButton_gameInactive));
+            }
+        });
     }
 
     
-    public void moveMessage(Message message) {
+    public void moveMessage(Message mes) {
         System.out.println("Player Turn: " + game.getPlayerTurn());
-        final int choice = Integer.parseInt(message.body.getField(Fields.CHOICE).toString());
+        final int choice = Integer.parseInt(mes.body.getField(Fields.CHOICE).toString());
         game.makeMove(choice);
 
         /*----------
@@ -264,8 +252,17 @@ public class GameActivity extends AppCompatActivity {
         }
         else {
             game.toggleActive();
+            Message message = new Message();
+            message.header.type = "GAME_OVER";
+            message.header.recipient = opponent;
+            message.body.addField(Fields.WINNER, gameWinner);
+            messageReactor.request(message);
             gameOverUI(gameWinner);
         }
+    }
+
+    public void gameOver(Message message) {
+        gameOverUI(Integer.parseInt(message.body.getField(Fields.WINNER).toString()));
     }
 
     /*----------
