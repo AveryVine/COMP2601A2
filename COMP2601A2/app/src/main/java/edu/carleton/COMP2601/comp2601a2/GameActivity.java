@@ -25,7 +25,7 @@ public class GameActivity extends AppCompatActivity {
     private MessageReactor messageReactor;
 
     /*----------
-    - Description: runs when the application first boots up
+    - Description: runs when the activity first boots up
     ----------*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class GameActivity extends AppCompatActivity {
                     gameOverUI(EMPTY_VAL, player);
                     toggleClickListeners(false);
                 }
-                else if (playerTurn == X_VAL) {
+                else if (playerTurn == X_VAL) { //Only runnable by the person who initiates the game
                     game = new Game();
                     prepareUI();
                     Message message = new Message();
@@ -74,6 +74,9 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    /*----------
+    - Description: runs when the activity ends
+    ----------*/
     @Override
     public void onStop() {
         super.onStop();
@@ -126,7 +129,7 @@ public class GameActivity extends AppCompatActivity {
 
     /*----------
     - Description: toggles on and off user input on the board
-    - Input: none
+    - Input: whether the button listeners should be toggled on or off
     - Return: none
     ----------*/
     public void toggleClickListeners(boolean toggleOn) {
@@ -146,8 +149,12 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
-    public void gameOn(Message message) {
+    /*----------
+    - Description: runs when the user receives a message from the server indicating a new game has begun
+    - Input: none
+    - Return: none
+    ----------*/
+    public void gameOn() {
         prepareUI();
         runOnUiThread(new Runnable() {
             public void run() {
@@ -235,7 +242,7 @@ public class GameActivity extends AppCompatActivity {
 
     /*----------
     - Description: updates the UI after the game has been won or the game has ended
-    - Input: the winner
+    - Input: the winner, the player who ended the game (sometimes the same, sometimes different)
     - Return: none
     ----------*/
     public void gameOverUI(final int winner, final String gameEnder) {
@@ -268,7 +275,11 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    
+    /*----------
+    - Description: runs when the user receives a message from the server indicating a move has been made by the opponent
+    - Input: the message from the server
+    - Output: none
+    ----------*/
     public void moveMessage(Message mes) {
         final int choice = Integer.parseInt(mes.body.getField(Fields.CHOICE).toString());
         game.makeMove(choice);
@@ -312,6 +323,11 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /*----------
+    - Description: runs when the user receives a message from the server indicating the game is over
+    - Input: message from the server
+    - Output: none
+     */
     public void gameOver(Message message) {
         game.toggleActive();
         int winner = Integer.parseInt(message.body.getField(Fields.WINNER).toString());
@@ -333,7 +349,5 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    public static GameActivity getInstance() {
-        return instance;
-    }
+    public static GameActivity getInstance() { return instance; }
 }
