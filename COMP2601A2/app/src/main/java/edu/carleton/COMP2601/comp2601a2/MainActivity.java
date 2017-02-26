@@ -1,6 +1,8 @@
 package edu.carleton.COMP2601.comp2601a2;
 
+import android.content.ComponentCallbacks2;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
     private ProgressBar spinner;
 
-    private String address = "192.168.0.19";
+    private String address = "192.168.0.26";
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -106,14 +108,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     //TODO - FIX ME
+
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         super.onDestroy();
         Message message = new Message();
         message.header.type = "DISCONNECT_REQUEST";
         messageReactor.request(message);
     }
+
+/*
+    public void onTaskRemoved(Intent rootIntent){
+        System.out.println("SOMEBODY IS CLOSED");
+        Message message = new Message();
+        message.header.type = "DISCONNECT_REQUEST";
+        messageReactor.request(message);
+        //super.onTaskRemoved(rootIntent);
+    }
+    */
 
     public static MainActivity getInstance() { return instance; }
 
