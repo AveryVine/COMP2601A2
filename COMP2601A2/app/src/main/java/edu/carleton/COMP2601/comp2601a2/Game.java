@@ -19,20 +19,6 @@ public class Game {
     }
 
     /*----------
-    - Description: select a random UNOCCUPIED square to make a move in
-    - Input: none
-    - Return: the selected square
-    ----------*/
-    public int randomSquare() {
-        Random rand = new Random();
-        int choice = -1;
-        do {
-            choice = rand.nextInt(9);
-        } while (board[choice] != EMPTY_VAL);
-        return choice;
-    }
-
-    /*----------
     - Description: makes a move for the current player at the given square
     - Input: choice of square
     - Return: none
