@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity instance;
 
 
-    ArrayList<String> array;
+    private ArrayList<String> array;
 
     MessageReactor messageReactor;
     private ListView listView;
@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         instance = this;
 
 
-        adapter = new ArrayAdapter<String>(MainActivity.getInstance(),
-                R.layout.activity_main_component, array);
+        adapter = new ArrayAdapter<String>(this, R.layout.activity_main_component, array);
 
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
@@ -88,15 +87,32 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
                 String name = array.get(position);
-                Message message = new Message();
-                message.header.type = "PLAY_GAME_REQUEST";
-                message.body.addField(Fields.RECIPIENT, name);
-                messageReactor.request(message);
+                if (!name.equals(nameText)) {
+                    Message message = new Message();
+                    message.header.type = "PLAY_GAME_REQUEST";
+                    message.body.addField(Fields.RECIPIENT, name);
+                    messageReactor.request(message);
+                }
+                else {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            textField.setText("You cannot challenge yourself to a game.");
+                        }
+                    });
+                }
             }
         });
 
+    }
+
+    //TODO - FIX ME
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Message message = new Message();
+        message.header.type = "DISCONNECT_REQUEST";
+        messageReactor.request(message);
     }
 
     public static MainActivity getInstance() { return instance; }
@@ -147,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playGameResponse(final Message mes) {
-        System.out.println(mes.body.getField(Fields.PLAY_STATUS).toString());
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
             System.out.println("NOT IMPLEMENTED YET");
         }
@@ -184,21 +199,18 @@ public class MainActivity extends AppCompatActivity {
     public void usersUpdated(Message mes) {
         try {
             JSONObject jsonObj = new JSONObject(mes.body.getField(Fields.BODY).toString());
-            array = new ArrayList<>();
-            for (int i = 0; i < ((JSONArray) jsonObj.get("listOfUsers")).length(); i++) {
-                System.out.println("Added : " + ((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
-                System.out.println(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString().getClass().getName());
-                array.add(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
+            JSONArray jsonArr = (JSONArray) jsonObj.get("listOfUsers");
+            array.clear();
+            for (int i = 0; i < jsonArr.length(); i++) {
+                System.out.println("Added : " + jsonArr.get(i).toString());
+                System.out.println(jsonArr.get(i).toString().getClass().getName());
+                array.add(jsonArr.get(i).toString());
             }
-            System.out.println("this is the array: " + array);
-            adapter.notifyDataSetChanged();
-            /*
             runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.notifyDataSetChanged();
                 }
             });
-            */
         } catch (Exception e) {
             e.printStackTrace();
         }

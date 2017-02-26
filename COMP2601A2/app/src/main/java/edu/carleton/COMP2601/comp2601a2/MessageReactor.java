@@ -78,7 +78,6 @@ public class MessageReactor {
 
     public Message request(Message msg) {
         try {
-            System.out.println("Requesting...");
             Event event = new Event(msg.header.type, es);
             event.put(Fields.ID, userid);
             event.put(Fields.PLAY_STATUS, msg.body.getField(Fields.PLAY_STATUS));
