@@ -1,6 +1,7 @@
 package edu.carleton.COMP2601.comp2601a2;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -163,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void playGameResponse(final Message mes) {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
-            System.out.println("NOT IMPLEMENTED YET");
+            Intent communicationView = new Intent(this, GameActivity.class);
+            MainActivity.getInstance().startActivity(communicationView);
         }
         else {
             runOnUiThread(new Runnable() {
