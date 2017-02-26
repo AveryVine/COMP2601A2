@@ -3,10 +3,11 @@
     <string name = "startButton_gameActive">Stop</string>
     <string name = "startButton_gameInactive">Start</string>
     <string name = "displayTextView_gameInactive">Press Start</string>
-    <string name = "x_winner">Game is over. You won!</string>
-    <string name = "o_winner">Game is over. Computer won!</string>
+    <string name = "x_winner">Game is over. x has won!</string>
+    <string name = "o_winner">Game is over. u has won!</string>
     <string name = "tie_winner">Game is over. No one won!</string>
     <string name = "no_winner">Game ended.</string>
+    <string name = "game_ended">I ended the game.</string>
     <string name = "blank"></string>
     <string name = "square0">Button 0 pressed.</string>
     <string name = "square1">Button 1 pressed.</string>

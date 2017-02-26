@@ -75,6 +75,8 @@ public class MessageReactor {
                 @Override
                 public void handleEvent(Event event) {
                     System.out.println("Received GAME_OVER");
+                    Message message = convertEventToMessage(event);
+                    //GameActivity.getInstance().moveMessage(message);
                 }
             });
             twr.start();

@@ -208,13 +208,32 @@ public class GameActivity extends AppCompatActivity {
     - Return: none
     ----------*/
     public void gameOverUI(int winner) {
-        if (winner == X_VAL) { displayTextView.setText(R.string.x_winner); }
-        else if (winner == O_VAL) { displayTextView.setText(R.string.o_winner); }
-        else if (winner == TIE_WINNER) { displayTextView.setText(R.string.tie_winner); }
-        else { displayTextView.setText(R.string.no_winner); }
+
+        Message message = new Message();
+        message.header.type = "GAME_OVER";
+        message.header.recipient = opponent;
+
+        if (winner == X_VAL) {
+            displayTextView.setText(R.string.x_winner);
+            message.body.addField(Fields.REASON, R.string.x_winner);
+        }
+        else if (winner == O_VAL) {
+            displayTextView.setText(R.string.o_winner);
+            message.body.addField(Fields.REASON, R.string.o_winner);
+        }
+        else if (winner == TIE_WINNER) {
+            displayTextView.setText(R.string.tie_winner);
+            message.body.addField(Fields.REASON, R.string.tie_winner);
+        }
+        else {
+            displayTextView.setText(getString(R.string.game_ended));
+            message.body.addField(Fields.REASON, R.string.game_ended);
+        }
         startButton.setText(getString(R.string.startButton_gameInactive));
+        messageReactor.request(message);
     }
 
+    
     public void moveMessage(Message message) {
         final int choice = Integer.parseInt(message.body.getField(Fields.CHOICE).toString());
         game.makeMove(choice);
@@ -227,7 +246,7 @@ public class GameActivity extends AppCompatActivity {
         int gameWinner = game.gameWinner();
         if (gameWinner == EMPTY_VAL) {
             game.switchPlayer();
-            toggleClickListeners(false);
+            toggleClickListeners(true);
         }
         else {
             game.toggleActive();
