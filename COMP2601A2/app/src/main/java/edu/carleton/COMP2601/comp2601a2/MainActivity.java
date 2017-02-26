@@ -40,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private String nameText = "";
     private TextView textField;
 
+
+    /*----------
+    - Description: runs when the activity first boots up
+    ----------*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,8 +114,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //TODO - FIX ME
-
+    /*----------
+    - Description: Sends a disconnect request message to the server
+    - Input: none
+    - Return: none
+    ----------*/
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -120,6 +127,12 @@ public class MainActivity extends AppCompatActivity {
         messageReactor.request(message);
     }
 
+
+    /*----------
+    - Description: UI updates here to show that user is connected
+    - Input: none
+    - Return: none
+    ----------*/
     public void connectedResponse() {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -130,6 +143,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*----------
+    - Description: Option given to receiver of game request message to
+                    join the game (yes) or not to (no) in the form of a Dialog.
+    - Input: mes
+    - Return: none
+    ----------*/
     public void playGameRequest(final Message mes) {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -169,6 +188,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*----------
+    - Description: Function starts the game activity if other player said YES,
+                    and updates the textfield if other player said NO.
+    - Input: mes
+    - Return: none
+    ----------*/
     public void playGameResponse(final Message mes) {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
             Intent gameActivity = new Intent(this, GameActivity.class);
@@ -187,6 +212,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /*----------
+    - Description: Dialog for retrieving users name on connection.
+    - Input: none
+    - Return: none
+    ----------*/
     public void promptName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Please enter your name here");
@@ -207,6 +237,11 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /*----------
+    - Description: Updates array of active users in the application.
+    - Input: mes
+    - Return: none
+    ----------*/
     public void usersUpdated(Message mes) {
         try {
             JSONObject jsonObj = new JSONObject(mes.body.getField(Fields.BODY).toString());
@@ -227,5 +262,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Main activity single instance
     public static MainActivity getInstance() { return instance; }
 }
