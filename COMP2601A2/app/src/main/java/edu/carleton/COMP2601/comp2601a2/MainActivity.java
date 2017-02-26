@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     static int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
     private ProgressBar spinner;
 
-    private String address = "192.168.0.21";
+    private String address = "192.168.0.19";
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     messageReactor.request(mes);
+                    //adapter.notifyDataSetChanged();                 //trying this change
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -189,12 +190,15 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString().getClass().getName());
                 array.add(((JSONArray) jsonObj.get("listOfUsers")).get(i).toString());
             }
-            System.out.println(array);
+            System.out.println("this is the array: " + array);
+            adapter.notifyDataSetChanged();
+            /*
             runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.notifyDataSetChanged();
                 }
             });
+            */
         } catch (Exception e) {
             e.printStackTrace();
         }
