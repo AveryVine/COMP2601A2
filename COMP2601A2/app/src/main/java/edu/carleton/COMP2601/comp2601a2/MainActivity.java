@@ -20,6 +20,11 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 
+import static edu.carleton.COMP2601.comp2601a2.Game.X_VAL;
+import static edu.carleton.COMP2601.comp2601a2.Game.O_VAL;
+import static edu.carleton.COMP2601.comp2601a2.Game.TIE_WINNER;
+import static edu.carleton.COMP2601.comp2601a2.Game.EMPTY_VAL;
+
 public class MainActivity extends AppCompatActivity {
 
     private ProgressBar spinner;
@@ -27,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
-    public static MainActivity instance;
+    private static MainActivity instance;
 
 
     private ArrayList<String> array;
@@ -115,19 +120,6 @@ public class MainActivity extends AppCompatActivity {
         messageReactor.request(message);
     }
 
-/*
-    public void onTaskRemoved(Intent rootIntent){
-        System.out.println("SOMEBODY IS CLOSED");
-        Message message = new Message();
-        message.header.type = "DISCONNECT_REQUEST";
-        messageReactor.request(message);
-        //super.onTaskRemoved(rootIntent);
-    }
-    */
-
-    public static MainActivity getInstance() { return instance; }
-
-
     public void connectedResponse() {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -155,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                         message.body.addField(Fields.PLAY_STATUS, "true");
                         messageReactor.request(message);
                         Intent communicationView = new Intent(MainActivity.getInstance(), GameActivity.class);
+                        communicationView.putExtra("playerTurn", O_VAL);
                         MainActivity.getInstance().startActivity(communicationView);
                     }
                 });
@@ -177,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
     public void playGameResponse(final Message mes) {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
             Intent communicationView = new Intent(this, GameActivity.class);
+            communicationView.putExtra("playerTurn", X_VAL);
             MainActivity.getInstance().startActivity(communicationView);
         }
         else {
@@ -228,4 +222,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public static MainActivity getInstance() { return instance; }
 }

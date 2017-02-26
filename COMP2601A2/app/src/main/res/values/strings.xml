@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">COMP2601A2</string>
+    <string name = "app_name">COMP2601A2</string>
+    <string name = "startButton_gameActive">Running</string>
+    <string name = "startButton_gameInactive">Start</string>
+    <string name = "displayTextView_gameInactive">Press Start</string>
+    <string name = "x_winner">Game is over. You won!</string>
+    <string name = "o_winner">Game is over. Computer won!</string>
+    <string name = "tie_winner">Game is over. No one won!</string>
+    <string name = "no_winner">Game ended.</string>
+    <string name = "blank"></string>
+    <string name = "square0">Button 0 pressed.</string>
+    <string name = "square1">Button 1 pressed.</string>
+    <string name = "square2">Button 2 pressed.</string>
+    <string name = "square3">Button 3 pressed.</string>
+    <string name = "square4">Button 4 pressed.</string>
+    <string name = "square5">Button 5 pressed.</string>
+    <string name = "square6">Button 6 pressed.</string>
+    <string name = "square7">Button 7 pressed.</string>
+    <string name = "square8">Button 8 pressed.</string>
 </resources>

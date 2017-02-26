@@ -1,12 +1,9 @@
 package edu.carleton.COMP2601.comp2601a2;
 import java.util.Random;
 
-import static edu.carleton.COMP2601.comp2601a2.GameActivity.X_VAL;
-import static edu.carleton.COMP2601.comp2601a2.GameActivity.O_VAL;
-import static edu.carleton.COMP2601.comp2601a2.GameActivity.TIE_WINNER;
-import static edu.carleton.COMP2601.comp2601a2.GameActivity.EMPTY_VAL;
-
 public class Game {
+
+    static final int X_VAL = 1, O_VAL = 2, TIE_WINNER = 3, EMPTY_VAL = 0;
 
     private int[] board;
     private int playerTurn;
