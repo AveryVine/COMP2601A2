@@ -4,11 +4,14 @@ import java.net.Socket;
 
 public class MessageReactor {
 
+    private static MessageReactor instance;
+
     private Socket s;
     private String userid;
     private EventStreamImpl es;
 
     public void connect(String host, int port, String userid) {
+        instance = this;
         this.userid = userid;
         try {
             s = new Socket(host, port);
@@ -104,5 +107,9 @@ public class MessageReactor {
             message.body.addField(Fields.PLAY_STATUS, event.get(Fields.PLAY_STATUS));
         message.header.id = event.get(Fields.ID).toString();
         return message;
+    }
+
+    public static MessageReactor getInstance() {
+        return instance;
     }
 }

@@ -21,6 +21,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView displayTextView;
     private ImageButton[] imgButtonArr;
     private int playerTurn;
+    private MessageReactor messageReactor;
 
     /*----------
     - Description: runs when the application first boots up
@@ -31,6 +32,7 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         instance = this;
+        messageReactor = MessageReactor.getInstance();
 
         imgButtonArr = new ImageButton[9];
 
@@ -135,8 +137,6 @@ public class GameActivity extends AppCompatActivity {
     - Return: none
     ----------*/
     public void squareClicked(View view) {
-        gameThread.interrupt();
-        gameThread = null;
         int choice = -1;
         for (int j = 0; j < 9; j++) {
             String imgButtonID = "imageButton" + j; //This is not in strings.xml as it is used for resource ID's
@@ -148,17 +148,16 @@ public class GameActivity extends AppCompatActivity {
         game.makeMove(choice);
         updateSquareUI(imgButtonArr[choice], game.getPlayerTurn());
         updateDisplayTextView(choice);
-        final int gameWinner = game.gameWinner();
-        if (gameWinner == EMPTY_VAL) {
-            game.switchPlayer();
-            initGameThread();
-            gameThread.start();
-        }
-        else {
+        Message message = new Message();
+        message.header.type = "MOVE_MESSAGE";
+        message.body.addField(Fields.CHOICE, choice);
+        messageReactor.request(message);
+        int gameWinner = game.gameWinner();
+        toggleClickListeners();
+        if (gameWinner != EMPTY_VAL) {
             game.toggleActive();
             gameOverUI(gameWinner);
         }
-        toggleClickListeners();
     }
 
     /*----------
