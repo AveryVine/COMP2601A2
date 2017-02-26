@@ -1,15 +1,11 @@
 package edu.carleton.COMP2601.comp2601a2;
 
-import android.content.ComponentCallbacks2;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.format.Formatter;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,20 +18,12 @@ import android.widget.Toast;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
 public class MainActivity extends AppCompatActivity {
 
     private ProgressBar spinner;
-
-    WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-    private String address = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());;
-
+    private String address;
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -53,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //address = getIpAddress();
+        address = "192.168.0.21";
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         textField = (TextView) findViewById(R.id.textView);
         spinner.setVisibility(View.GONE);
@@ -116,27 +104,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-    public static String getIpAddress() {
-        try {
-            for (Enumeration en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-                NetworkInterface intf = (NetworkInterface) en.nextElement();
-                for (Enumeration enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                    InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()&&inetAddress instanceof Inet4Address) {
-                        String ipAddress=inetAddress.getHostAddress().toString();
-                        Log.e("IP address",""+ipAddress);
-                        return "192.168.0.21";
-                        //return ipAddress;
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
 
     //TODO - FIX ME
 
