@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         if (mes.body.getField(Fields.PLAY_STATUS).toString().equals("true")) {
             Intent gameActivity = new Intent(this, GameActivity.class);
             gameActivity.putExtra("playerTurn", X_VAL);
+            gameActivity.putExtra("opponent", mes.header.id);
             MainActivity.getInstance().startActivity(gameActivity);
         }
         else {
