@@ -26,7 +26,7 @@ import static edu.carleton.COMP2601.comp2601a2.Game.O_VAL;
 public class MainActivity extends AppCompatActivity {
 
     private ProgressBar spinner;
-    private String address;
+    private String address = "192.168.0.30";
     private int port = 7000;
 
     private android.widget.ArrayAdapter adapter;
@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.main_activity_name);
 
-        address = "192.168.0.21";
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         textField = (TextView) findViewById(R.id.textView);
         spinner.setVisibility(View.GONE);
