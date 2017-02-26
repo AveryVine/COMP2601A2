@@ -21,6 +21,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView displayTextView;
     private ImageButton[] imgButtonArr;
     private int playerTurn;
+    private String opponent;
     private MessageReactor messageReactor;
 
     /*----------
@@ -37,6 +38,7 @@ public class GameActivity extends AppCompatActivity {
         imgButtonArr = new ImageButton[9];
 
         playerTurn = (int) getIntent().getSerializableExtra("playerTurn");
+        opponent = (String) getIntent().getSerializableExtra("opponent");
 
         initUI();
         game = new Game();

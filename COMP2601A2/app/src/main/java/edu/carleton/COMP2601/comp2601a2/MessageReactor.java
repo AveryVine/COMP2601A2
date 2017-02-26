@@ -89,7 +89,7 @@ public class MessageReactor {
             event.put(Fields.PLAY_STATUS, msg.body.getField(Fields.PLAY_STATUS));
             if (!msg.body.getMap().isEmpty())
                 event.put(Fields.BODY, msg.body.getMap());
-            event.put(Fields.RECIPIENT, msg.body.getField(Fields.RECIPIENT));
+            event.put(Fields.RECIPIENT, msg.header.recipient);
             es.putEvent(event);
         } catch (Exception e) {
             e.printStackTrace();
