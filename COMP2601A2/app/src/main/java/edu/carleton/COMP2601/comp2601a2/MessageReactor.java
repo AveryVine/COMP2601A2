@@ -90,7 +90,10 @@ public class MessageReactor {
             event.put(Fields.PLAY_STATUS, msg.body.getField(Fields.PLAY_STATUS));
             if (!msg.body.getMap().isEmpty())
                 event.put(Fields.BODY, msg.body.getMap());
+            if (msg.body.getField(Fields.CHOICE) != null)
+                event.put(Fields.CHOICE, msg.body.getField(Fields.CHOICE));
             event.put(Fields.RECIPIENT, msg.header.recipient);
+            System.out.println("Recipient: " + event.get(Fields.RECIPIENT));
             es.putEvent(event);
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,6 +110,8 @@ public class MessageReactor {
             message.header.recipient = event.get(Fields.RECIPIENT).toString();
         if (event.get(Fields.PLAY_STATUS) != null)
             message.body.addField(Fields.PLAY_STATUS, event.get(Fields.PLAY_STATUS));
+        if (event.get(Fields.CHOICE) != null)
+            message.body.addField(Fields.CHOICE, event.get(Fields.CHOICE));
         message.header.id = event.get(Fields.ID).toString();
         return message;
     }

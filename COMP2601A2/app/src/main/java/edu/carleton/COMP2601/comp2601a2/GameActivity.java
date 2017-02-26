@@ -41,30 +41,35 @@ public class GameActivity extends AppCompatActivity {
         opponent = (String) getIntent().getSerializableExtra("opponent");
 
         initUI();
-        game = new Game();
+        game = new Game(playerTurn);
         game.toggleActive();
 
-        startButton.setOnClickListener(new View.OnClickListener() {
-            /*----------
-            - Description: runs when the start/running button is pressed; toggles the state of the game
-            ----------*/
-            public void onClick(View view) {
-                if (game.getActive()) {
-                    game.toggleActive();
-                    gameOverUI(EMPTY_VAL);
-                    toggleClickListeners();
+        if (playerTurn == X_VAL) {
+            startButton.setOnClickListener(new View.OnClickListener() {
+                /*----------
+                - Description: runs when the start/running button is pressed; toggles the state of the game
+                ----------*/
+                public void onClick(View view) {
+                    if (game.getActive()) {
+                        game.toggleActive();
+                        gameOverUI(EMPTY_VAL);
+                        toggleClickListeners(false);
+                    }
+                    else {
+                        game = new Game(playerTurn);
+                        prepareUI();
+                        Message message = new Message();
+                        message.header.type = "GAME_ON";
+                        message.header.recipient = opponent;
+                        messageReactor.request(message);
+                        toggleClickListeners(true);
+                    }
                 }
-                else {
-                    game = new Game();
-                    prepareUI();
-                    Message message = new Message();
-                    message.header.type = "GAME_ON";
-                    message.header.recipient = opponent;
-                    messageReactor.request(message);
-                    toggleClickListeners();
-                }
-            }
-        });
+            });
+        }
+        else {
+            //TODO - maybe grey out the button?
+        }
     }
 
     /*----------
@@ -90,11 +95,15 @@ public class GameActivity extends AppCompatActivity {
     - Return: none
     ----------*/
     public void prepareUI() {
-        startButton.setText(getString(R.string.startButton_gameActive));
-        displayTextView.setText(getString(R.string.blank));
-        for (int i = 0; i < 9; i++) {
-            updateSquareUI(imgButtonArr[i], EMPTY_VAL);
-        }
+        runOnUiThread(new Runnable() {
+            public void run() {
+                startButton.setText(getString(R.string.startButton_gameActive));
+                displayTextView.setText(getString(R.string.blank));
+                for (int i = 0; i < 9; i++) {
+                    updateSquareUI(imgButtonArr[i], EMPTY_VAL);
+                }
+            }
+        });
     }
 
     /*----------
@@ -102,9 +111,9 @@ public class GameActivity extends AppCompatActivity {
     - Input: none
     - Return: none
     ----------*/
-    public void toggleClickListeners() {
+    public void toggleClickListeners(boolean toggleOn) {
         for (int i = 0; i < 9; i++) {
-            if (game.getPlayerTurn() == X_VAL) {
+            if (toggleOn) {
                 if (!game.squareOccupied(i)) {
                     imgButtonArr[i].setOnClickListener(new View.OnClickListener() {
                         public void onClick(View view) {
@@ -121,11 +130,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void gameOn(Message message) {
-        startButton.setText(getString(R.string.startButton_gameActive));
-        displayTextView.setText(message.header.id + " has started a game.");
-        for (int i = 0; i < 9; i++) {
-            updateSquareUI(imgButtonArr[i], EMPTY_VAL);
-        }
+        prepareUI();
     }
 
     /*----------
@@ -165,11 +170,15 @@ public class GameActivity extends AppCompatActivity {
         updateDisplayTextView(choice);
         Message message = new Message();
         message.header.type = "MOVE_MESSAGE";
+        message.header.recipient = opponent;
         message.body.addField(Fields.CHOICE, choice);
         messageReactor.request(message);
         int gameWinner = game.gameWinner();
-        toggleClickListeners();
-        if (gameWinner != EMPTY_VAL) {
+        toggleClickListeners(false);
+        if (gameWinner == EMPTY_VAL) {
+            game.switchPlayer();
+        }
+        else {
             game.toggleActive();
             gameOverUI(gameWinner);
         }
@@ -180,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
     - Input: the ImageButton to be updated, the value to put inside the square
     - Return: none
     ----------*/
-    public void updateSquareUI(ImageButton imgButton, int value) {
+    public void updateSquareUI(final ImageButton imgButton, final int value) {
         switch (value) {
             case X_VAL:
                 imgButton.setImageResource(R.drawable.x_button);
@@ -207,13 +216,18 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void moveMessage(Message message) {
-        int choice = Integer.parseInt(message.body.getField(Fields.CHOICE).toString());
+        final int choice = Integer.parseInt(message.body.getField(Fields.CHOICE).toString());
         game.makeMove(choice);
-        updateSquareUI(imgButtonArr[choice], game.getPlayerTurn());
-        updateDisplayTextView(choice);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                updateSquareUI(imgButtonArr[choice], game.getPlayerTurn());
+                updateDisplayTextView(choice);
+            }
+        });
         int gameWinner = game.gameWinner();
         if (gameWinner == EMPTY_VAL) {
-            toggleClickListeners();
+            game.switchPlayer();
+            toggleClickListeners(false);
         }
         else {
             game.toggleActive();

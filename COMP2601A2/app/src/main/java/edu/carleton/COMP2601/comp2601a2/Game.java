@@ -12,9 +12,9 @@ public class Game {
     /*----------
     - Description: constructor for game
     ----------*/
-    public Game() {
+    public Game(int playerTurn) {
         active = true;
-        playerTurn = X_VAL;
+        this.playerTurn = playerTurn;
         board = new int[9];
     }
 
