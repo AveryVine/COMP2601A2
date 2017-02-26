@@ -1,5 +1,10 @@
 package edu.carleton.COMP2601.comp2601a2;
 
+/*---------------------------
+- Avery Vine		100999500
+- Alexei Tipenko	100995947
+---------------------------*/
+
 import org.json.simple.JSONObject;
 import java.net.*;
 import java.util.ArrayList;

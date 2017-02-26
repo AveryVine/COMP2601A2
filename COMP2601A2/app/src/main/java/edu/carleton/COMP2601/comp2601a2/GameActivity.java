@@ -1,5 +1,10 @@
 package edu.carleton.COMP2601.comp2601a2;
 
+/*---------------------------
+- Avery Vine		100999500
+- Alexei Tipenko	100995947
+---------------------------*/
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;

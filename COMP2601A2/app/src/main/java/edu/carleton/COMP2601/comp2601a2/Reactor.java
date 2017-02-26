@@ -1,5 +1,10 @@
 package edu.carleton.COMP2601.comp2601a2;
 
+/*---------------------------
+- Avery Vine		100999500
+- Alexei Tipenko	100995947
+---------------------------*/
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Reactor implements ReactorInterface {
