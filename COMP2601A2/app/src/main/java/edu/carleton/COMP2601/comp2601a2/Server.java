@@ -14,6 +14,11 @@ public class Server {
     private ThreadWithReactor twr;
     private ConcurrentHashMap<String, ThreadWithReactor> clients;
 
+    /*----------
+    - Description: initializes the reactor
+    - Input: none
+    - Return: none
+    ----------*/
     public void init() {
         r = new Reactor();
         clients = new ConcurrentHashMap<String, ThreadWithReactor>();
@@ -95,6 +100,11 @@ public class Server {
         }
     }
 
+    /*----------
+    - Description: directly passes the event to the recipient
+    - Input: the event to be passed
+    - Return: none
+    ----------*/
     public void passEventToRecipient(Event event) {
         ThreadWithReactor twr = clients.get(event.get(Fields.RECIPIENT));
         EventStream es = twr.getEventSource();
@@ -106,6 +116,11 @@ public class Server {
         }
     }
 
+    /*----------
+    - Description: sends every connected user a list of all the users connected to the server
+    - Input: none
+    - Return: none
+    ----------*/
     public void sendUpdatedUserList() {
         Event event = new Event("USERS_UPDATED");
         ArrayList<String> listOfClients = new ArrayList<>();
@@ -135,6 +150,11 @@ public class Server {
         }
     }
 
+    /*----------
+    - Description: runs the server loop, listens for connections
+    - Input: none
+    - Return: none
+    ----------*/
     public void run() {
         try {
             while (true) {
@@ -151,6 +171,9 @@ public class Server {
         }
     }
 
+    /*----------
+    - Description: starts the server
+    ----------*/
     public static void main(String[] args) {
         Server ns = new Server();
         ns.init();
