@@ -119,6 +119,15 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+
+    public void gameOn(Message message) {
+        startButton.setText(getString(R.string.startButton_gameActive));
+        displayTextView.setText(message.header.id + " has started a game.");
+        for (int i = 0; i < 9; i++) {
+            updateSquareUI(imgButtonArr[i], EMPTY_VAL);
+        }
+    }
+
     /*----------
     - Description: updates the UI of the text view after a move has been made
     - Input: the move that was made
