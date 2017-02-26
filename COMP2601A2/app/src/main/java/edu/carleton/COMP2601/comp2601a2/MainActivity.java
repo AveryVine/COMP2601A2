@@ -110,15 +110,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    //TODO - FIX ME
-//
-//    @Override
-//    protected void onStop() {
-//        super.onDestroy();
-//        Message message = new Message();
-//        message.header.type = "DISCONNECT_REQUEST";
-//        messageReactor.request(message);
-//    }
+    //TODO - FIX ME
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Message message = new Message();
+        message.header.type = "DISCONNECT_REQUEST";
+        messageReactor.request(message);
+    }
 
     public void connectedResponse() {
         runOnUiThread(new Runnable() {

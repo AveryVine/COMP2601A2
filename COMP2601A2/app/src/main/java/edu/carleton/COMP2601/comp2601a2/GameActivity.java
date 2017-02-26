@@ -74,6 +74,16 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Message message = new Message();
+        message.header.type = "GAME_OVER";
+        message.header.recipient = opponent;
+        message.body.addField(Fields.WINNER, EMPTY_VAL);
+        messageReactor.request(message);
+    }
+
     /*----------
     - Description: links UI elements in activity_main.xml to their programmatic equivalents in this file
     - Input: none
@@ -89,11 +99,12 @@ public class GameActivity extends AppCompatActivity {
         startButton = (Button) findViewById(R.id.startButton);
         if (playerTurn == X_VAL) {
             startButton.setText(getString(R.string.startButton_gameInactive));
+            displayTextView.setText(getString(R.string.displayTextView_gameInactive));
         }
         else {
             startButton.setText(getString(R.string.startButton_gameWaiting));
+            displayTextView.setText(getString(R.string.blank));
         }
-        displayTextView.setText(getString(R.string.displayTextView_gameInactive));
     }
 
     /*----------
@@ -138,6 +149,11 @@ public class GameActivity extends AppCompatActivity {
 
     public void gameOn(Message message) {
         prepareUI();
+        runOnUiThread(new Runnable() {
+            public void run() {
+                displayTextView.setText(opponent + " " + getString(R.string.displayTextView_gameStart));
+            }
+        });
         game = new Game();
     }
 
@@ -147,16 +163,30 @@ public class GameActivity extends AppCompatActivity {
     - Return: none
     ----------*/
     public void updateDisplayTextView(int choice) {
-        if (choice == 0) displayTextView.setText(getString(R.string.square0));
-        else if (choice == 1) displayTextView.setText(getString(R.string.square1));
-        else if (choice == 2) displayTextView.setText(getString(R.string.square2));
-        else if (choice == 3) displayTextView.setText(getString(R.string.square3));
-        else if (choice == 4) displayTextView.setText(getString(R.string.square4));
-        else if (choice == 5) displayTextView.setText(getString(R.string.square5));
-        else if (choice == 6) displayTextView.setText(getString(R.string.square6));
-        else if (choice == 7) displayTextView.setText(getString(R.string.square7));
-        else if (choice == 8) displayTextView.setText(getString(R.string.square8));
-        else displayTextView.setText(getString(R.string.blank));
+        if (game.getPlayerTurn() == playerTurn) {
+            if (choice == 0) displayTextView.setText(getString(R.string.square0) + " " + getString(R.string.me));
+            else if (choice == 1) displayTextView.setText(getString(R.string.square1) + " " + getString(R.string.me));
+            else if (choice == 2) displayTextView.setText(getString(R.string.square2) + " " + getString(R.string.me));
+            else if (choice == 3) displayTextView.setText(getString(R.string.square3) + " " + getString(R.string.me));
+            else if (choice == 4) displayTextView.setText(getString(R.string.square4) + " " + getString(R.string.me));
+            else if (choice == 5) displayTextView.setText(getString(R.string.square5) + " " + getString(R.string.me));
+            else if (choice == 6) displayTextView.setText(getString(R.string.square6) + " " + getString(R.string.me));
+            else if (choice == 7) displayTextView.setText(getString(R.string.square7) + " " + getString(R.string.me));
+            else if (choice == 8) displayTextView.setText(getString(R.string.square8) + " " + getString(R.string.me));
+            else displayTextView.setText(getString(R.string.blank));
+        }
+        else {
+            if (choice == 0) displayTextView.setText(getString(R.string.square0) + " " + opponent);
+            else if (choice == 1) displayTextView.setText(getString(R.string.square1) + " " + opponent);
+            else if (choice == 2) displayTextView.setText(getString(R.string.square2) + " " + opponent);
+            else if (choice == 3) displayTextView.setText(getString(R.string.square3) + " " + opponent);
+            else if (choice == 4) displayTextView.setText(getString(R.string.square4) + " " + opponent);
+            else if (choice == 5) displayTextView.setText(getString(R.string.square5) + " " + opponent);
+            else if (choice == 6) displayTextView.setText(getString(R.string.square6) + " " + opponent);
+            else if (choice == 7) displayTextView.setText(getString(R.string.square7) + " " + opponent);
+            else if (choice == 8) displayTextView.setText(getString(R.string.square8) + " " + opponent);
+            else displayTextView.setText(getString(R.string.blank));
+        }
     }
 
     /*----------
@@ -216,14 +246,14 @@ public class GameActivity extends AppCompatActivity {
                 }
                 else if (winner == EMPTY_VAL) {
                     if (gameEnder.equals(player)) {
-                        displayTextView.setText("I " + getString(R.string.no_winner));
+                        displayTextView.setText(getString(R.string.I) + " " + getString(R.string.no_winner));
                     }
                     else {
                         displayTextView.setText(opponent + " " + getString(R.string.no_winner));
                     }
                 }
                 else if (winner == playerTurn) {
-                    displayTextView.setText("I " + getString(R.string.gameOver));
+                    displayTextView.setText(getString(R.string.I) + " " + getString(R.string.gameOver));
                 }
                 else {
                     displayTextView.setText(opponent + " " + getString(R.string.gameOver));
