@@ -10,6 +10,11 @@ public class MessageReactor {
     private String userid;
     private EventStreamImpl es;
 
+    /*----------
+    - Description: connects the user to the server and prepares the client-side reactor
+    - Input: IP address, port number, and username
+    - Return: none
+    ----------*/
     public void connect(String host, int port, String userid) {
         instance = this;
         this.userid = userid;
@@ -60,7 +65,7 @@ public class MessageReactor {
                 public void handleEvent(Event event) {
                     System.out.println("Received GAME_ON");
                     Message message = convertEventToMessage(event);
-                    GameActivity.getInstance().gameOn(message);
+                    GameActivity.getInstance().gameOn();
                 }
             });
             twr.register("MOVE_MESSAGE", new EventHandler() {
@@ -85,6 +90,11 @@ public class MessageReactor {
         }
     }
 
+    /*----------
+    - Description: converts a message to an event and sends it to the server
+    - Input: the message to be sent
+    - Return: none
+    ----------*/
     public Message request(Message msg) {
         try {
             Event event = new Event(msg.header.type, es);
@@ -104,6 +114,11 @@ public class MessageReactor {
         return msg;
     }
 
+    /*----------
+    - Description: converts and event to a message and sends it to the client
+    - Input: the event to be sent
+    - Return: none
+    ----------*/
     public Message convertEventToMessage(Event event) {
         Message message = new Message();
         message.header.type = event.type;
@@ -121,7 +136,5 @@ public class MessageReactor {
         return message;
     }
 
-    public static MessageReactor getInstance() {
-        return instance;
-    }
+    public static MessageReactor getInstance() { return instance; }
 }
