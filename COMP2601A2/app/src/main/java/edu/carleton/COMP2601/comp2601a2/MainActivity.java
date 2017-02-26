@@ -3,10 +3,12 @@ package edu.carleton.COMP2601.comp2601a2;
 import android.content.ComponentCallbacks2;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar spinner;
 
-    private String address;
+    WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+    private String address = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());;
 
     private int port = 7000;
 
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        address = getIpAddress();
+        //address = getIpAddress();
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         textField = (TextView) findViewById(R.id.textView);
         spinner.setVisibility(View.GONE);
