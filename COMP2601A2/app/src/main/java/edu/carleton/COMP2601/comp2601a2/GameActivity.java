@@ -41,35 +41,30 @@ public class GameActivity extends AppCompatActivity {
         opponent = (String) getIntent().getSerializableExtra("opponent");
 
         initUI();
-        game = new Game(playerTurn);
+        game = new Game();
         game.toggleActive();
 
-        if (playerTurn == X_VAL) {
-            startButton.setOnClickListener(new View.OnClickListener() {
-                /*----------
-                - Description: runs when the start/running button is pressed; toggles the state of the game
-                ----------*/
-                public void onClick(View view) {
-                    if (game.getActive()) {
-                        game.toggleActive();
-                        gameOverUI(EMPTY_VAL);
-                        toggleClickListeners(false);
-                    }
-                    else {
-                        game = new Game(playerTurn);
-                        prepareUI();
-                        Message message = new Message();
-                        message.header.type = "GAME_ON";
-                        message.header.recipient = opponent;
-                        messageReactor.request(message);
-                        toggleClickListeners(true);
-                    }
+        startButton.setOnClickListener(new View.OnClickListener() {
+            /*----------
+            - Description: runs when the start/running button is pressed; toggles the state of the game
+            ----------*/
+            public void onClick(View view) {
+                if (game.getActive()) {
+                    game.toggleActive();
+                    gameOverUI(EMPTY_VAL);
+                    toggleClickListeners(false);
                 }
-            });
-        }
-        else {
-            //TODO - maybe grey out the button?
-        }
+                else if (playerTurn == X_VAL) {
+                    game = new Game();
+                    prepareUI();
+                    Message message = new Message();
+                    message.header.type = "GAME_ON";
+                    message.header.recipient = opponent;
+                    messageReactor.request(message);
+                    toggleClickListeners(true);
+                }
+            }
+        });
     }
 
     /*----------
@@ -235,14 +230,33 @@ public class GameActivity extends AppCompatActivity {
 
     
     public void moveMessage(Message message) {
+        System.out.println("Player Turn: " + game.getPlayerTurn());
         final int choice = Integer.parseInt(message.body.getField(Fields.CHOICE).toString());
         game.makeMove(choice);
-        runOnUiThread(new Runnable() {
+
+        /*----------
+        - These next few lines ensure that the UI is updated AFTER the state of the game board is updated
+        ----------*/
+        final Runnable updateUI = new Runnable() {
+            /*----------
+            - Description: runs when the user has made a move; updates the UI squares
+            ----------*/
+            @Override
             public void run() {
                 updateSquareUI(imgButtonArr[choice], game.getPlayerTurn());
                 updateDisplayTextView(choice);
+                synchronized (this) {
+                    this.notify();
+                }
             }
-        });
+        };
+        synchronized (updateUI) {
+            runOnUiThread(updateUI);
+            waitToUpdateUI(updateUI);
+        }
+        /*----------
+        ----------*/
+
         int gameWinner = game.gameWinner();
         if (gameWinner == EMPTY_VAL) {
             game.switchPlayer();
@@ -251,6 +265,20 @@ public class GameActivity extends AppCompatActivity {
         else {
             game.toggleActive();
             gameOverUI(gameWinner);
+        }
+    }
+
+    /*----------
+    - Description: ensures that the game board is up to date before updating the UI
+    - Input: the runnable causing the UI of the board to update
+    - Return: none
+    ----------*/
+    public void waitToUpdateUI(Runnable updateUI) {
+        try {
+            updateUI.wait();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
